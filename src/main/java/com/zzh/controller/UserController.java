@@ -3,6 +3,7 @@ package com.zzh.controller;
 import com.zzh.common.Result;
 import com.zzh.pojo.User;
 import com.zzh.service.UserService;
+import com.zzh.utils.JwtUtil;
 import com.zzh.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.Pattern;
+import java.util.HashMap;
 
 
 @RestController
@@ -46,8 +48,12 @@ public class UserController {
         if (loginUser != null) {
             // 判断密码是否正确
             if (loginUser.getPassword().equals(Md5Util.getMD5String(password))) {
-                // 登录成功
-                return Result.success("jwt token令牌...");
+                // 登录成功，对用户进行赋权，进行之后的操作则不需要登录，否则不能进行获取其他资源的操作
+                HashMap<String, Object> claims = new HashMap<>();
+                claims.put("id", loginUser.getId());
+                claims.put("user", loginUser.getUsername());
+                String token = JwtUtil.genToken(claims);
+                return Result.success(token);
             } else {
                 return Result.error("密码错误");
             }

@@ -3,6 +3,7 @@ package com.zzh.controller;
 import com.zzh.common.Result;
 import com.zzh.pojo.User;
 import com.zzh.service.UserService;
+import com.zzh.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +34,25 @@ public class UserController {
         // 注册新用户
         userService.registerUser(username, password);
         return Result.success();
+    }
+
+    // 登录
+    // 参数合法性校验：用户名和密码均必须为5-16位的非空字符
+    @PostMapping("/login")
+    public Result login(@Pattern(regexp = "^\\S{5,16}$") String username,
+                        @Pattern(regexp = "^\\S{5,16}$") String password) {
+        // 根据用户名查询用户
+        User loginUser = userService.findByUserName(username);
+        if (loginUser != null) {
+            // 判断密码是否正确
+            if (loginUser.getPassword().equals(Md5Util.getMD5String(password))) {
+                // 登录成功
+                return Result.success("jwt token令牌...");
+            } else {
+                return Result.error("密码错误");
+            }
+        }
+        return Result.error("用户名不存在");
     }
 
 }

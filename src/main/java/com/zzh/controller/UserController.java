@@ -5,6 +5,7 @@ import com.zzh.pojo.User;
 import com.zzh.service.UserService;
 import com.zzh.utils.JwtUtil;
 import com.zzh.utils.Md5Util;
+import com.zzh.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -62,11 +63,14 @@ public class UserController {
 
     // 返回当前用户的详细信息【但是不能返回用户的密码！！】
     @GetMapping("/userInfo")
-    public Result<User> userInfo(@RequestHeader(name = "Authorization") String token) {
+    public Result<User> userInfo(/*@RequestHeader(name = "Authorization") String token*/) {
         // 根据用户名查询用户，这里的用户名是登录系统的用户，而登录用户可以从token中获取，因为在登录的时候，将用户名保存进了token中
-        Map<String, Object> claims = JwtUtil.parseToken(token);
-        String loginUser = (String) claims.get("user");
-        User user = userService.findByUserName(loginUser);
+        // Map<String, Object> claims = JwtUtil.parseToken(token);
+        // String loginUser = (String) claims.get("user");
+        // 使用ThreadLocal优化
+        Map<String, Object> claims = ThreadLocalUtil.get();
+        String username = (String) claims.get("user");
+        User user = userService.findByUserName(username);
         return Result.success(user);
     }
 

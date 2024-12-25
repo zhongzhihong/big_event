@@ -7,12 +7,11 @@ import com.zzh.utils.JwtUtil;
 import com.zzh.utils.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Pattern;
 import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -59,6 +58,16 @@ public class UserController {
             }
         }
         return Result.error("用户名不存在");
+    }
+
+    // 返回当前用户的详细信息【但是不能返回用户的密码！！】
+    @GetMapping("/userInfo")
+    public Result<User> userInfo(@RequestHeader(name = "Authorization") String token) {
+        // 根据用户名查询用户，这里的用户名是登录系统的用户，而登录用户可以从token中获取，因为在登录的时候，将用户名保存进了token中
+        Map<String, Object> claims = JwtUtil.parseToken(token);
+        String loginUser = (String) claims.get("user");
+        User user = userService.findByUserName(loginUser);
+        return Result.success(user);
     }
 
 }

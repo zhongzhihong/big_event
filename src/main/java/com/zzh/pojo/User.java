@@ -1,5 +1,6 @@
 package com.zzh.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,8 @@ public class User {
     // 用户名
     private String username;
     // 密码
+    // 让springmvc把当前对象转换成json字符串时，忽略password属性，最后返回的data中就不会包含该属性
+    @JsonIgnore
     private String password;
     // 昵称
     private String nickname;

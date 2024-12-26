@@ -74,8 +74,9 @@ public class UserController {
         return Result.success(user);
     }
 
+    // 更新逻辑中也需要对参数进行合法性校验，这时需要去实体类中对实体属性添加注解，最后还要在请求时对实体类添加 @Validated 注解
     @PutMapping("/update")
-    public Result update(@RequestBody User user) {
+    public Result update(@RequestBody @Validated User user) {
         userService.update(user);
         return Result.success();
     }

@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,6 +16,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class User {
     // 主键ID
+    // @NotNull：值不能为null
+    @NotNull
     private Integer id;
     // 用户名
     private String username;
@@ -20,8 +26,13 @@ public class User {
     @JsonIgnore
     private String password;
     // 昵称
+    // @NotEmpty：值不能为null，且内容不能为空
+    @NotEmpty
+    @Pattern(regexp = "^\\S{1,10}$")
     private String nickname;
     // 邮箱
+    @NotEmpty
+    @Email
     private String email;
     // 用户头像地址
     private String userPic;
